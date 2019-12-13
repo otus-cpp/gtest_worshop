@@ -2,11 +2,8 @@ cmake_minimum_required(VERSION 3.2)
 
 project(ProjestWithGTest)
 
-# Build googletest
-add_subdirectory(
-    "${CMAKE_CURRENT_SOURCE_DIR}/googletest" 
-    "googletest"
-)
+# Lookup for pre-built gtest
+find_package(GTest)
 
 # Main target
 add_executable(
@@ -26,18 +23,19 @@ target_include_directories(
     test_list PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}/src"
 )
+# Add googletest to the include directories for the test target
+target_include_directories(
+    test_list PRIVATE
+    ${GTEST_INCLUDE_DIRS}
+)
 
 # Link test target against gtest libraries
 target_link_libraries(
     test_list PRIVATE
-    gtest gtest_main
+    ${GTEST_BOTH_LIBRARIES}
 )
 
 if (MSVC)
-    # @see https://github.com/google/googletest/blob/master/googletest/README.md
-    # Visual Studio Dynamic vs Static Runtimes
-    set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
-
     target_compile_options(
         demo PRIVATE
         /W4

@@ -8,29 +8,46 @@ add_subdirectory(
     "googletest"
 )
 
-# Main target
-add_executable(
-    demo
-    src/main.cpp
-    src/list.hpp
-)
-
 # Test target
 add_executable(
-    test_list
-    test/test_list.cpp
+    test_assertions
+    test/test_assertions.cpp
+)
+add_executable(
+    test_fixtures
+    test/test_fixtures.cpp
+)
+add_executable(
+    test_mocks
+    test/test_mocks.cpp
 )
 
 # Add src to the include directories for the test target
 target_include_directories(
-    test_list PRIVATE
+    test_assertions PRIVATE
+    "${CMAKE_CURRENT_SOURCE_DIR}/src"
+)
+target_include_directories(
+    test_fixtures PRIVATE
+    "${CMAKE_CURRENT_SOURCE_DIR}/src"
+)
+target_include_directories(
+    test_mocks PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}/src"
 )
 
 # Link test target against gtest libraries
 target_link_libraries(
-    test_list PRIVATE
+    test_assertions PRIVATE
     gtest gtest_main
+)
+target_link_libraries(
+    test_fixtures PRIVATE
+    gtest gtest_main
+)
+target_link_libraries(
+    test_mocks PRIVATE
+    gtest gtest_main gmock
 )
 
 if (MSVC)
@@ -39,20 +56,28 @@ if (MSVC)
     set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 
     target_compile_options(
-        demo PRIVATE
+        test_assertions PRIVATE
         /W4
     )
     target_compile_options(
-        test_list PRIVATE
+        test_fixtures PRIVATE
+        /W4
+    )
+    target_compile_options(
+        test_mocks PRIVATE
         /W4
     )
 else ()
     target_compile_options(
-        demo PRIVATE
+        test_assertions PRIVATE
         -Wall -Wextra -pedantic -Werror
     )
     target_compile_options(
-        test_list PRIVATE
+        test_fixtures PRIVATE
+        -Wall -Wextra -pedantic -Werror
+    )
+    target_compile_options(
+        test_mocks PRIVATE
         -Wall -Wextra -pedantic -Werror
     )
 endif()
